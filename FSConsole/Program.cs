@@ -134,7 +134,7 @@ namespace FSConsole
             }
         }
 
-        public static void DisplayFileContent(FSDirectory data, long key)
+        public static void DisplayFileContent(FSFile data)
         {
             if (!data.IsDirectory)
             {
@@ -145,7 +145,10 @@ namespace FSConsole
             }
             else 
             {
-                Console.WriteLine(data.FileAllocationTable[key]);
+                foreach (var dir in (data as FSDirectory).FileAllocationTable.Values)
+                {
+                    Console.WriteLine(dir);
+                }
             }
         }
 
