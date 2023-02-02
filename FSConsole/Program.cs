@@ -6,13 +6,14 @@ namespace FSConsole
     internal class Program
     {
         private static bool exiting = false;
+        private static FSContainer fs;
         private static void Main(string[] args)
         {
             string path = AppDomain.CurrentDomain.BaseDirectory + "fs.bin";
             Console.Write("Initializing... ");
             if (File.Exists(path))
             {
-                FS.LoadFS(path);
+                fs = new FSContainer(path);
             }
             else
             {
@@ -39,7 +40,14 @@ namespace FSConsole
                     }
                 }
 
-                FS.CreateFS(path, clusterSize, totalSize);
+                fs = new FSContainer(path, clusterSize, totalSize);
+            }
+
+            while (!exiting)
+            {
+                Console.Write('>');
+                string? input = Console.ReadLine();
+                ProcessInput(input);
             }
         }
 
@@ -61,24 +69,24 @@ namespace FSConsole
                 {
                     case "mkdir": //Създаване на директория 
                         {
-                            FS.CreateDirectory(param);
+                            fs.CreateDirectory(param);
                             break;
                         }
                     case "rmdir": //Изтриване на празна директория 
                         {
-                            FS.DeleteDirectory(param);
+                            fs.DeleteDirectory(param);
                             break;
                         }
                     case "ls": //Извеждане на съдържанието на директория 
                         {
-                            FS.GetSubdirectoriesAndFiles(param);
+                            fs.GetSubdirectoriesAndFiles(param);
                             break;
                         }
                     case "cd": //Промяна на текущата директория 
                         {
-                            if (FS.DirectoryExists(param))
+                            if (fs.DirectoryExists(param))
                             {
-                                Directory.SetCurrentDirectory(param);
+                                //Directory.SetCurrentDirectory(param);
                             }
                             break;
                         }
@@ -89,12 +97,12 @@ namespace FSConsole
                         }
                     case "rm": //Изтриване на файл 
                         {
-                            FS.DeleteFile(param);
+                            fs.DeleteFile(param);
                             break;
                         }
                     case "cat": //Извеждане на съдържанието на файл на екрана 
                         {
-                            FS.DisplayFileContent(param);
+                            fs.DisplayFileContent(param);
                             break;
                         }
                     case "write": //Записване на съдържание към файл 
