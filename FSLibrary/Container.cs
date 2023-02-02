@@ -1,4 +1,6 @@
 ﻿using FSTools;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace FSLibrary
 {
@@ -48,6 +50,27 @@ namespace FSLibrary
 
 
         #region Dir
+
+        public static byte[] SerializeDirectory(FSDirectory dir)
+        {
+            IFormatter bf = new BinaryFormatter();
+            using (var ms = new MemoryStream())
+            {
+                bf.Serialize(ms, dir);
+                return ms.ToArray();
+            }
+        }
+
+        public static FSDirectory DesirializeDirectory()
+        {
+
+            IFormatter bf = new BinaryFormatter();
+            using (var ms = new MemoryStream())
+            {
+                FSDirectory dir = (FSDirectory)(bf.Deserialize(ms));
+                return dir;
+            }
+        }
         public void CreateDirectory(string fullPath)
         {
             if (!Tools.PathFormatValid(fullPath))
