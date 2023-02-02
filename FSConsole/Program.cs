@@ -43,6 +43,7 @@ namespace FSConsole
                 fs = new FSContainer(path, clusterSize, totalSize);
             }
 
+            Console.WriteLine($"Done. Cluster size: {fs.BlockSize} bytes; Total size: {fs.ContainerSize} bytes.");
             while (!exiting)
             {
                 Console.Write('>');

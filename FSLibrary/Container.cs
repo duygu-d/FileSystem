@@ -6,8 +6,8 @@ namespace FSLibrary
 {
     public class FSContainer
     {
-        private int BlockSize { get; init; } = 4096;     //4 KB    
-        private long ContainerSize { get; init; } = 1099511627776; //1 TB
+        public int BlockSize { get; init; } = 4096;     //4 KB    
+        public long ContainerSize { get; init; } = 104857600; //100Mb
         private int BlockCount;
         private string ContainerPath;
 
@@ -28,7 +28,13 @@ namespace FSLibrary
             }
 
             ContainerSize = BlockSize * BlockCount;
-            table = new int[BlockCount];
+
+            byte[] tableData;
+            using (BinaryReader br = new BinaryReader(_stream))
+            {
+                tableData = br.ReadBytes(BlockCount * 4);
+            }
+            table = (int[])DeserializeItem(tableData);
         }
 
         public FSContainer(string path, int blockSize = 4096, long containerSize = 104857600)
@@ -39,36 +45,43 @@ namespace FSLibrary
             BlockCount = (int)(containerSize / blockSize);
             table = new int[BlockCount];
 
+            for (int i = 0; i < BlockCount; i++)
+            {
+                table[i] = i;
+            }
+
             _stream = new FileStream(ContainerPath, FileMode.Create, FileAccess.ReadWrite);
 
             using (BinaryWriter bw = new BinaryWriter(_stream))
             {
                 bw.Write(BlockSize);
                 bw.Write(BlockCount);
+                byte[] tableData = SerializeItem(table);
+                bw.Write(tableData);
             }
+
         }
 
 
 
         #region Dir
 
-        public static byte[] SerializeFile(FSDirectory dir)
+        public static byte[] SerializeItem(object obj)
         {
             IFormatter bf = new BinaryFormatter();
             using (var ms = new MemoryStream())
             {
-                bf.Serialize(ms, dir);
+                bf.Serialize(ms, obj);
                 return ms.ToArray();
             }
         }
 
-        public static FSDirectory DesirializeFile()
+        public static object DeserializeItem(byte[] data)
         {
-
             IFormatter bf = new BinaryFormatter();
-            using (var ms = new MemoryStream())
+            using (var ms = new MemoryStream(data))
             {
-                FSDirectory dir = (FSDirectory)(bf.Deserialize(ms));
+                object dir = bf.Deserialize(ms);
                 return dir;
             }
         }

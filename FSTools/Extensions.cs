@@ -56,6 +56,14 @@ namespace FSTools
                 list.Add(tmp);
             }
 
+            if (count != int.MaxValue && !stringSplitOptions.HasFlag(StringSplitOptions.RemoveEmptyEntries))
+            {
+                while (list.Count < count)
+                {
+                    list.Add("");
+                }
+            }
+
             return list.ToArray();
         }
 
@@ -71,7 +79,7 @@ namespace FSTools
             return result;
         }
 
-        public static string FSTrimString(string strToTrim, string input)
+        public static string FSTrimString(this string input, string strToTrim)
         {
             StringBuilder newStr = new StringBuilder();
             for (int i = strToTrim.Length; i < input.Length; i++)
@@ -107,14 +115,5 @@ namespace FSTools
             return result;
         }
 
-        public static string FSToString(this char[] input)
-        {
-            string result = "";
-            foreach (char c in input)
-            {
-                result += c;
-            }
-            return result;
-        }
     }
 }

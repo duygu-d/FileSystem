@@ -30,12 +30,12 @@
 
         public void Add(T item)
         {
-            lastIndex++;
             if (lastIndex == array.Length)
             {
                 Expand();
             }
             array[lastIndex] = item;
+            lastIndex++;
         }
         public int IndexOf(T value)
         {
