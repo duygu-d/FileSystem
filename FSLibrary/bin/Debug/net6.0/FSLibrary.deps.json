@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "FSLibrary/1.0.0": {
+        "dependencies": {
+          "FSTools": "1.0.0"
+        },
+        "runtime": {
+          "FSLibrary.dll": {}
+        }
+      },
+      "FSTools/1.0.0": {
+        "runtime": {
+          "FSTools.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "FSLibrary/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "FSTools/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
