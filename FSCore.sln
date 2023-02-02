@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FSConsole", "FSConsole\FSConsole.csproj", "{A12EED08-E35C-41F8-866F-8BCBC56A7CF4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FSTools", "FSTools\FSTools.csproj", "{93EFFA92-357E-4ED8-877E-4813A605975C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FSLibrary", "FSLibrary\FSLibrary.csproj", "{469A48A2-773C-4299-A91A-9B593C9CBD1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A12EED08-E35C-41F8-866F-8BCBC56A7CF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A12EED08-E35C-41F8-866F-8BCBC56A7CF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A12EED08-E35C-41F8-866F-8BCBC56A7CF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A12EED08-E35C-41F8-866F-8BCBC56A7CF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93EFFA92-357E-4ED8-877E-4813A605975C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93EFFA92-357E-4ED8-877E-4813A605975C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93EFFA92-357E-4ED8-877E-4813A605975C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93EFFA92-357E-4ED8-877E-4813A605975C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{469A48A2-773C-4299-A91A-9B593C9CBD1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{469A48A2-773C-4299-A91A-9B593C9CBD1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{469A48A2-773C-4299-A91A-9B593C9CBD1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{469A48A2-773C-4299-A91A-9B593C9CBD1B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DD8BA052-226F-4C64-A409-CA809402F8A8}
+	EndGlobalSection
+EndGlobal
