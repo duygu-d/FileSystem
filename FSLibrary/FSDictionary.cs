@@ -10,62 +10,62 @@ namespace FSLibrary
 {
     public class FSDictionary<TKey, TValue> 
     {
-        private FSList<TKey> keys;
-        private FSList<TValue> values;
+        public FSList<TKey> Keys;
+        public FSList<TValue> Values;
 
         public FSDictionary()
         {
-            keys = new FSList<TKey>();
-            values = new FSList<TValue>();
+            Keys = new FSList<TKey>();
+            Values = new FSList<TValue>();
         }
 
         public void Add(TKey key, TValue value)
         {
-            keys.Add(key);
-            values.Add(value);
+            Keys.Add(key);
+            Values.Add(value);
         }
 
         public TValue this[TKey key]
         {
             get
             {
-                int index = keys.IndexOf(key);
+                int index = Keys.IndexOf(key);
                 if (index == -1)
                 {
                     throw new IndexOutOfRangeException();
                 }
-                return values[index];
+                return Values[index];
             }
             set
             {
-                int index = keys.IndexOf(key);
+                int index = Keys.IndexOf(key);
                 if (index == -1)
                 {
                     throw new IndexOutOfRangeException();
                 }
-                values[index] = value;
+                Values[index] = value;
             }
         }
         public bool ContainsKey(TKey key)
         {
-            return keys.Contains(key);
+            return Keys.Contains(key);
         }
 
         public bool Remove(TKey key)
         {
-            int index = keys.IndexOf(key);
+            int index = Keys.IndexOf(key);
             if (index == -1)
             {
                 return false;
             }
-            keys.RemoveAt(index);
-            values.RemoveAt(index);
+            Keys.RemoveAt(index);
+            Values.RemoveAt(index);
             return true;
         }
 
         public int Count
         {
-            get { return keys.Count; }
+            get { return Keys.Count; }
         }
     }
 }
