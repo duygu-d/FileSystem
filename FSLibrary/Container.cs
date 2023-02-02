@@ -52,7 +52,7 @@ namespace FSLibrary
 
         #region Dir
 
-        public static byte[] SerializeDirectory(FSDirectory dir)
+        public static byte[] SerializeFile(FSDirectory dir)
         {
             IFormatter bf = new BinaryFormatter();
             using (var ms = new MemoryStream())
@@ -62,7 +62,7 @@ namespace FSLibrary
             }
         }
 
-        public static FSDirectory DesirializeDirectory()
+        public static FSDirectory DesirializeFile()
         {
 
             IFormatter bf = new BinaryFormatter();

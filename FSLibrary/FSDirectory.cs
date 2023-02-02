@@ -14,6 +14,7 @@ namespace FSLibrary
         public FSDirectory()
         {
             _fileAllocationTable = new FSDictionary<long, string>();
+            IsDirectory = true;
         }
     }
 }
