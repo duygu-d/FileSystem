@@ -15,14 +15,15 @@ namespace FSLibrary
         private FSDirectory root;
         private Stream _stream;
         private BinaryReader br;
+        private BinaryWriter bw;
 
         public FSContainer(string path)
         {
             ContainerPath = path;
 
             _stream = new FileStream(ContainerPath, FileMode.Open, FileAccess.ReadWrite);
+            InitReaderWriter();
 
-            BinaryReader br = new BinaryReader(_stream);
             BlockSize = br.ReadInt32();
             BlockCount = br.ReadInt32();
 
@@ -47,18 +48,63 @@ namespace FSLibrary
             }
 
             _stream = new FileStream(ContainerPath, FileMode.Create, FileAccess.ReadWrite);
+            InitReaderWriter();
 
-            using (BinaryWriter bw = new BinaryWriter(_stream))
-            {
-                bw.Write(BlockSize);
-                bw.Write(BlockCount);
-                byte[] tableData = table.FSToByteArray();
-                bw.Write(tableData);
-            }
+            bw.Write(BlockSize);
+            bw.Write(BlockCount);
+            byte[] tableData = table.FSToByteArray();
+            bw.Write(tableData);
 
         }
 
+        private void InitReaderWriter()
+        {
+            bw = new BinaryWriter(_stream);
+            br = new BinaryReader(_stream);
+        }
 
+        public int AllocateBlock()
+        {
+            int index = (int)((BlockCount * 8) / BlockSize); // размерът на FAT в блокове: (брой блокове в контейнера * 8 байта за long) / размерът на блока
+            index++; //първият блок винаги е root directory, търсим след него
+
+            while (index < table.Length)
+            {
+                if (table[index] == 0)
+                {
+                    table[index] = int.MinValue; // записваме FFFFFFFF защото блокът вече е алокиран, но още не знаем дали ще е свързан със следващ
+                    return index;
+                }
+                index++;
+            }
+
+            throw new IndexOutOfRangeException();
+        }
+
+        public void WriteAllFileBytes(byte[] fileBytes, int block = -1)
+        {
+            if (block < 0)
+            {
+                block = AllocateBlock();
+            }
+
+            int i = 0;
+            do
+            {
+                bw.BaseStream.Position = block * BlockSize;
+                bw.Write(fileBytes[i]);
+                int newBlock = AllocateBlock();
+                table[block] = newBlock;
+                block = newBlock;
+                i++;
+            } while (i < fileBytes.Length);
+        }
+
+        public void ReadFileBytes(int block)
+        {
+            FSList<byte> bytes = new FSList<byte>();
+
+        }
 
         #region Dir
 
@@ -198,66 +244,6 @@ namespace FSLibrary
             Console.WriteLine(File.ReadAllText(path));
         }
         #endregion
-
-        public void ReadFileBytes(string fileName)
-        {
-            //if (_fileAllocationTable.ContainsKey(fileName))
-            //{
-            //    int[] blocksIndexes = _fileAllocationTable[fileName];
-            //    int startIndex = blocksIndexes[0];
-            //    int EndIndex = blocksIndexes[1];
-
-            //    using (BinaryReader reader = new BinaryReader(_stream, Encoding.Default, true))
-            //    {
-            //        reader.BaseStream.Seek(EndIndex, SeekOrigin.Begin);
-            //        byte[] fileBytes = reader.ReadBytes(EndIndex * BLOCK_SIZE);
-            //        _fileStorage.Add(fileBytes);
-            //    }
-            //}
-            //else
-            //{
-            //    Console.WriteLine("The file does not exist!");
-            //}
-        }
-
-        public void WriteAllFileBytes(string fileName, byte[] fileBytes)
-        {
-            //if (_fileAllocationTable.ContainsKey(fileName))
-            //{
-            //    int[] blockRange = _fileAllocationTable[fileName];
-            //    int startIndex = blockRange[0];
-            //    int endIndex = blockRange[1];
-            //    int blockCount = endIndex - startIndex + 1;
-
-            //    using (BinaryWriter binaryWriter = new BinaryWriter(_stream, Encoding.Default, true))
-            //    {
-            //        binaryWriter.Seek(startIndex * BLOCK_SIZE, SeekOrigin.Begin);
-            //        binaryWriter.Write(fileBytes);
-            //    }
-            //}
-            //else
-            //{
-            //    Console.WriteLine("The file does not exist!");
-            //}
-        }
-
-        public int AllocateBlock()
-        {
-            int index = (int)((BlockCount * 8) / BlockSize); // размерът на FAT в блокове: (брой блокове в контейнера * 8 байта за long) / размерът на блока
-            index++; //първият блок винаги е root directory, търсим след него
-
-            while (index < table.Length)
-            {
-                if (table[index] == 0)
-                {
-                    table[index] = int.MinValue; // записваме FFFFFFFF защото блокът вече е алокиран, но още не знаем дали ще е свързан със следващ
-                    return index;
-                }
-                index++;
-            }
-
-            throw new IndexOutOfRangeException();
-        }
 
         public void UpdateFreeBlockCount()
         {
