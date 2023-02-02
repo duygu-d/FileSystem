@@ -143,11 +143,12 @@ namespace FSConsole
                     Console.Write((char)b);
                 }
             }
-            else 
+            else
             {
-                foreach (var dir in (data as FSDirectory).FileAllocationTable.Values)
+                FSDictionary<int, string> table = (data as FSDirectory).FileAllocationTable;
+                for (int i = 0; i < table.Count; i++)
                 {
-                    Console.WriteLine(dir);
+                    Console.WriteLine(table[i]);
                 }
             }
         }

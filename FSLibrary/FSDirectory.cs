@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FSLibrary
+﻿namespace FSLibrary
 {
     [Serializable]
     public class FSDirectory : FSFile
     {
-        public FSDictionary<long, string> FileAllocationTable;
+        public FSDictionary<int, string> FileAllocationTable;
 
         public FSDirectory()
         {
-            FileAllocationTable = new FSDictionary<long, string>();
+            FileAllocationTable = new FSDictionary<int, string>();
             IsDirectory = true;
         }
     }
