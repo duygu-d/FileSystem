@@ -10,7 +10,7 @@ namespace FSLibrary
         private string ContainerPath;
 
         private long[] table;
-
+        private FSDirectory root;
         private Stream _stream;
 
         public FSContainer(string path)

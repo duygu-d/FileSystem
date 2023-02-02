@@ -1,9 +1,7 @@
-﻿using FSTools;
-
-namespace FSLibrary
+﻿namespace FSLibrary
 {
-    internal class FSFile
+    public class FSFile
     {
-        private FSList<FSNode> rootNodes;
+        //private FSList<FSNode> rootNodes;
     }
 }
