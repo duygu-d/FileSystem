@@ -1,8 +1,5 @@
 ﻿using FSLibrary;
 using FSTools;
-using System.Globalization;
-using System.Text;
-using System.Xml.Linq;
 
 namespace FSConsole
 {
@@ -11,13 +8,38 @@ namespace FSConsole
         private static bool exiting = false;
         private static void Main(string[] args)
         {
-            string path = Console.ReadLine();
-
-            while (!exiting)
+            string path = AppDomain.CurrentDomain.BaseDirectory + "fs.bin";
+            Console.Write("Initializing... ");
+            if (File.Exists(path))
             {
-                Console.Write('>');
-                string? input = Console.ReadLine();
-                ProcessInput(input);
+                FS.LoadFS(path);
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("FS not found. Creating new FS.");
+                int clusterSize = 0;
+                while (clusterSize == 0)
+                {
+                    Console.Write("Enter cluster size (bytes): ");
+                    string? input = Console.ReadLine();
+                    if (input == null || !int.TryParse(input, out clusterSize))
+                    {
+                        Console.Write("Invalid value. ");
+                    }
+                }
+                long totalSize = 0;
+                while (totalSize == 0)
+                {
+                    Console.Write("Enter total size (bytes): ");
+                    string? input = Console.ReadLine();
+                    if (input == null || !long.TryParse(input, out totalSize))
+                    {
+                        Console.Write("Invalid value. ");
+                    }
+                }
+
+                FS.CreateFS(path, clusterSize, totalSize);
             }
         }
 

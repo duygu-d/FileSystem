@@ -1,19 +1,39 @@
 ﻿using FSTools;
-using System.IO;
-using System.Security.AccessControl;
 
 namespace FSLibrary
 {
     public static class FS
     {
-        private static int blockSize = 1024;
+        private const int bytesPerTableEntry = 4;
+        public static int clusterSize; //in bytes, 4096 = 4Kb
+        public static long totalSize; //in bytes, 104857600 = 100Mb
+        private static long tableSizeBytes; //in bytes, 
+        private static long[][] table; // [cluster number] []
+        private static FileStream fs = null;
 
-        public static void Initialize(string path, int blockSize, int totalSize)
+        public static void CreateFS(string path, int clusterSize = 4096, long totalSize = 104857600)
         {
-            FileStream fs = new FileStream(path, FileMode.Create);
-            BinaryWriter bw = new BinaryWriter(fs);
-            BinaryReader br = new BinaryReader(fs);
-            fs.Position = 0;
+            fs = new FileStream(path, FileMode.Create, FileAccess.ReadWrite);
+            tableSizeBytes = (totalSize / clusterSize) * bytesPerTableEntry;
+
+            using (BinaryWriter bw = new BinaryWriter(fs))
+            {
+                bw.Write(clusterSize);
+                bw.Write(tableSizeBytes);
+            }
+            FS.clusterSize = clusterSize;
+            FS.totalSize = totalSize;
+        }
+
+        public static void LoadFS(string path)
+        {
+            fs = new FileStream(path, FileMode.Open, FileAccess.ReadWrite);
+            using (BinaryReader br = new BinaryReader(fs))
+            {
+                clusterSize = br.ReadInt32();
+                tableSizeBytes = br.ReadInt64();
+                totalSize = clusterSize * (tableSizeBytes / bytesPerTableEntry);
+            }
         }
 
         #region Dir
