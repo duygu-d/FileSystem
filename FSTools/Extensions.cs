@@ -2,7 +2,7 @@
 
 namespace FSTools
 {
-    public static class FSString
+    public static class Extensions
     {
         public static string[] FSSplit(this string input, char separator, StringSplitOptions stringSplitOptions = StringSplitOptions.None)
         {
@@ -115,5 +115,30 @@ namespace FSTools
             return result;
         }
 
+        public static byte[] FSToByteArray(this int[] source)
+        {
+            byte[] result = new byte[source.Length * 4];
+            for (int i = 0; i < source.Length; i++)
+            {
+                result[i * 4] = (byte)(source[i] >> 24);
+                result[i * 4 + 1] = (byte)(source[i] >> 16);
+                result[i * 4 + 2] = (byte)(source[i] >> 8);
+                result[i * 4 + 3] = (byte)(source[i]);
+            }
+            return result;
+        }
+        public static int[] FSToIntArray(this byte[] source)
+        {
+            int[] result = new int[source.Length / 4];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = (byte)(source[i * 4] << 24);
+                result[i] = (byte)(source[i * 4 + 1] << 16);
+                result[i] = (byte)(source[i * 4 + 2] << 8);
+                result[i] = (byte)(source[i * 4 + 3]);
+            }
+            return result;
+        }
     }
+
 }

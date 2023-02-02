@@ -14,6 +14,7 @@ namespace FSLibrary
         private int[] table;
         private FSDirectory root;
         private Stream _stream;
+        private BinaryReader br;
 
         public FSContainer(string path)
         {
@@ -21,20 +22,15 @@ namespace FSLibrary
 
             _stream = new FileStream(ContainerPath, FileMode.Open, FileAccess.ReadWrite);
 
-            using (BinaryReader br = new BinaryReader(_stream))
-            {
-                BlockSize = br.ReadInt32();
-                BlockCount = br.ReadInt32();
-            }
+            BinaryReader br = new BinaryReader(_stream);
+            BlockSize = br.ReadInt32();
+            BlockCount = br.ReadInt32();
 
             ContainerSize = BlockSize * BlockCount;
 
-            byte[] tableData;
-            using (BinaryReader br = new BinaryReader(_stream))
-            {
-                tableData = br.ReadBytes(BlockCount * 4);
-            }
-            table = (int[])DeserializeItem(tableData);
+            byte[] tableData = br.ReadBytes(BlockCount * 4);
+
+            table = tableData.FSToIntArray();
         }
 
         public FSContainer(string path, int blockSize = 4096, long containerSize = 104857600)
@@ -56,7 +52,7 @@ namespace FSLibrary
             {
                 bw.Write(BlockSize);
                 bw.Write(BlockCount);
-                byte[] tableData = SerializeItem(table);
+                byte[] tableData = table.FSToByteArray();
                 bw.Write(tableData);
             }
 
