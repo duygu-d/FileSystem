@@ -72,7 +72,7 @@ namespace FSLibrary
             {
                 if (table[index] == 0)
                 {
-                    table[index] = int.MinValue; // записваме FFFFFFFF защото блокът вече е алокиран, но още не знаем дали ще е свързан със следващ
+                    table[index] = -1; // записваме FFFFFFFF защото блокът вече е алокиран, но още не знаем дали ще е свързан със следващ
                     return index;
                 }
                 index++;
@@ -88,22 +88,46 @@ namespace FSLibrary
                 block = AllocateBlock();
             }
 
+            int bytesWritten = 0;
+            bw.BaseStream.Position = block * BlockSize;
+
             int i = 0;
             do
             {
-                bw.BaseStream.Position = block * BlockSize;
                 bw.Write(fileBytes[i]);
-                int newBlock = AllocateBlock();
-                table[block] = newBlock;
-                block = newBlock;
+                bytesWritten++;
+                if (bytesWritten == BlockSize)
+                {
+                    int newBlock = AllocateBlock();
+                    table[block] = newBlock;
+                    block = newBlock;
+                    bw.BaseStream.Position = block * BlockSize;
+                }
                 i++;
             } while (i < fileBytes.Length);
         }
 
-        public void ReadFileBytes(int block)
+        public byte[] ReadFileBytes(int block)
         {
             FSList<byte> bytes = new FSList<byte>();
-
+            int bytesRead = 0;
+            br.BaseStream.Position = block * BlockSize;
+            while (true)
+            {
+                bytes.Add(br.ReadByte());
+                bytesRead++;
+                if (bytesRead == BlockSize)
+                {
+                    block = table[block];
+                    if (block == -1)
+                    {
+                        break;
+                    }
+                    bytesRead = 0;
+                    br.BaseStream.Position = block * BlockSize;
+                }
+            }
+            return bytes.ToArray();
         }
 
         #region Dir
