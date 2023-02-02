@@ -9,6 +9,7 @@ namespace FSLibrary
         public int BlockSize { get; init; } = 4096;     //4 KB    
         public long ContainerSize { get; init; } = 104857600; //100Mb
         private int BlockCount;
+        private int TableSizeInBlocks { get => (int)((BlockCount * 8) / BlockSize); } // размерът на FAT в блокове: (брой блокове в контейнера * 8 байта за long) / размерът на блока
         private string ContainerPath;
 
         private int[] table;
@@ -32,6 +33,9 @@ namespace FSLibrary
             byte[] tableData = br.ReadBytes(BlockCount * 4);
 
             table = tableData.FSToIntArray();
+
+            byte[] rootData = ReadFileBytes(TableSizeInBlocks);
+            root = (FSDirectory)DeserializeItem(rootData);
         }
 
         public FSContainer(string path, int blockSize = 4096, long containerSize = 104857600)
@@ -55,6 +59,8 @@ namespace FSLibrary
             byte[] tableData = table.FSToByteArray();
             bw.Write(tableData);
 
+            root = new FSDirectory();
+            WriteFileBytes(SerializeItem(root), TableSizeInBlocks); // записваме root директорията веднага зад FAT
         }
 
         private void InitReaderWriter()
@@ -65,7 +71,7 @@ namespace FSLibrary
 
         public int AllocateBlock()
         {
-            int index = (int)((BlockCount * 8) / BlockSize); // размерът на FAT в блокове: (брой блокове в контейнера * 8 байта за long) / размерът на блока
+            int index = TableSizeInBlocks;
             index++; //първият блок винаги е root directory, търсим след него
 
             while (index < table.Length)
@@ -81,7 +87,7 @@ namespace FSLibrary
             throw new IndexOutOfRangeException();
         }
 
-        public void WriteAllFileBytes(byte[] fileBytes, int block = -1)
+        public void WriteFileBytes(byte[] fileBytes, int block = -1)
         {
             if (block < 0)
             {
@@ -128,6 +134,20 @@ namespace FSLibrary
                 }
             }
             return bytes.ToArray();
+        }
+
+        public void DeleteFileAt(int block)
+        {
+            while (true)
+            {
+                int nextBlock = table[block];
+                if (nextBlock == -1)
+                {
+                    break;
+                }
+                table[block] = 0;
+                block = nextBlock;
+            }
         }
 
         #region Dir
@@ -269,16 +289,5 @@ namespace FSLibrary
         }
         #endregion
 
-        public void UpdateFreeBlockCount()
-        {
-            //FreeBlocksCount = 0;
-            //for (int i = 0; i < BLOCK_COUNT; i++)
-            //{
-            //    if (!_bitmap[i])
-            //    {
-            //        FreeBlocksCount++;
-            //    }
-            //}
-        }
     }
 }
