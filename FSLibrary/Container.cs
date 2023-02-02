@@ -16,7 +16,7 @@ namespace FSLibrary
         private long BLOCK_COUNT = CONTAINER_SIZE / BLOCK_SIZE;
         private bool[] _bitmap = new bool[CONTAINER_SIZE];
         private FSList<byte[]> _fileStorage = new FSList<byte[]>();
-        private FSDictionary<string, int[]> _fileAllocationTable = new FSDictionary<string, int[]>();
+        private FSDirectory root;
         private Stream _stream;
 
         public long FreeBlocksCount;
@@ -28,7 +28,7 @@ namespace FSLibrary
             FreeBlocksCount = BLOCK_COUNT; //първоначално всички блокове са свободни
         }
 
-        public void ReadFileBytes(string fileName)
+       /* public void ReadFileBytes(string fileName)
         {
             if (_fileAllocationTable.ContainsKey(fileName))
             {
@@ -119,6 +119,6 @@ namespace FSLibrary
                     FreeBlocksCount++;
                 }
             }
-        }
+        }*/
     }
 }

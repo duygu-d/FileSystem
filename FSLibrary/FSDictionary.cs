@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FSLibrary
 {
-    public class FSDictionary<TKey, TValue>
+    public class FSDictionary<TKey, TValue> 
     {
         private FSList<TKey> keys;
         private FSList<TValue> values;
