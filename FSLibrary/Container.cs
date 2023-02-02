@@ -8,10 +8,10 @@ namespace FSLibrary
     {
         private int BlockSize { get; init; } = 4096;     //4 KB    
         private long ContainerSize { get; init; } = 1099511627776; //1 TB
-        private long BlockCount;
+        private int BlockCount;
         private string ContainerPath;
 
-        private long[] table;
+        private int[] table;
         private FSDirectory root;
         private Stream _stream;
 
@@ -24,11 +24,11 @@ namespace FSLibrary
             using (BinaryReader br = new BinaryReader(_stream))
             {
                 BlockSize = br.ReadInt32();
-                BlockCount = br.ReadInt64();
+                BlockCount = br.ReadInt32();
             }
 
             ContainerSize = BlockSize * BlockCount;
-            table = new long[BlockCount];
+            table = new int[BlockCount];
         }
 
         public FSContainer(string path, int blockSize = 4096, long containerSize = 104857600)
@@ -36,8 +36,8 @@ namespace FSLibrary
             ContainerPath = path;
             BlockSize = blockSize;
             ContainerSize = containerSize;
-            BlockCount = containerSize / blockSize;
-            table = new long[BlockCount];
+            BlockCount = (int)(containerSize / blockSize);
+            table = new int[BlockCount];
 
             _stream = new FileStream(ContainerPath, FileMode.Create, FileAccess.ReadWrite);
 
@@ -47,6 +47,7 @@ namespace FSLibrary
                 bw.Write(BlockCount);
             }
         }
+
 
 
         #region Dir
@@ -231,44 +232,22 @@ namespace FSLibrary
             //}
         }
 
-        public int AllocateBlocks(string fileName)
+        public int AllocateBlock()
         {
-            //int startIndex = -1;
+            int index = (int)((BlockCount * 8) / BlockSize); // размерът на FAT в блокове: (брой блокове в контейнера * 8 байта за long) / размерът на блока
+            index++; //първият блок винаги е root directory, търсим след него
 
-            //if (_fileAllocationTable.ContainsKey(fileName))
-            //{
-            //    int[] blocksIndexes = _fileAllocationTable[fileName];
-            //    int startBlockIndex = blocksIndexes[0];
-            //    int endBlockIndex = blocksIndexes[1];
+            while (index < table.Length)
+            {
+                if (table[index] == 0)
+                {
+                    table[index] = int.MinValue; // записваме FFFFFFFF защото блокът вече е алокиран, но още не знаем дали ще е свързан със следващ
+                    return index;
+                }
+                index++;
+            }
 
-            //    int size = (endBlockIndex - startBlockIndex + 1) * BLOCK_SIZE;
-            //    if (size > FreeBlocksCount)
-            //    {
-            //        return -1;
-            //    }
-
-            //    for (int i = 0; i < BLOCK_COUNT; i++)
-            //    {
-            //        if (_bitmap[i] == false)
-            //        {
-            //            startIndex = i;
-            //            break;
-            //        }
-            //    }
-
-            //    int endIndex = startIndex + size - 1;
-            //    for (int i = startIndex; i <= endIndex; i++)
-            //    {
-            //        _bitmap[i] = true;
-            //        FreeBlocksCount--;
-            //    }
-
-            //    _fileAllocationTable[fileName] = new int[] { startIndex, endIndex };
-
-            //}
-
-            //return startIndex;
-            return 0;
+            throw new IndexOutOfRangeException();
         }
 
         public void UpdateFreeBlockCount()
