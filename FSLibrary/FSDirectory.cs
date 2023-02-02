@@ -9,11 +9,11 @@ namespace FSLibrary
     [Serializable]
     public class FSDirectory : FSFile
     {
-        private FSDictionary<long, string> _fileAllocationTable;
+        public FSDictionary<long, string> FileAllocationTable;
 
         public FSDirectory()
         {
-            _fileAllocationTable = new FSDictionary<long, string>();
+            FileAllocationTable = new FSDictionary<long, string>();
             IsDirectory = true;
         }
     }

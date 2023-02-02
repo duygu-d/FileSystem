@@ -80,7 +80,6 @@ namespace FSConsole
                         }
                     case "ls": //Извеждане на съдържанието на директория 
                         {
-                            fs.GetSubdirectoriesAndFiles(param);
                             break;
                         }
                     case "cd": //Промяна на текущата директория 
@@ -135,14 +134,18 @@ namespace FSConsole
             }
         }
 
-        private static void FormatGetSubdirectoriesAndFilesOutput(FSDictionary<string, string[]> dirsAndFiles, string path, string[] keyDirs)
+        public static void DisplayFileContent(FSDirectory data, long key)
         {
-            foreach (string key in keyDirs)
+            if (!data.IsDirectory)
             {
-                foreach (var fileName in dirsAndFiles[key])
+                foreach (var b in data.Data)
                 {
-                    FSString.FSSplit(fileName, '\\', StringSplitOptions.None);
+                    Console.Write((char)b);
                 }
+            }
+            else 
+            {
+                Console.WriteLine(data.FileAllocationTable[key]);
             }
         }
 
